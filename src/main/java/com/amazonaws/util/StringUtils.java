@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -125,9 +126,11 @@ public class StringUtils {
      * @return The base64 encoded contents of the specified byte buffer.
      */
     public static String fromByteBuffer(ByteBuffer byteBuffer) {
-        if (byteBuffer.hasArray())
-            return Base64.encodeAsString(byteBuffer.array());
-        byte[] binaryData = new byte[byteBuffer.limit()];
+        if (byteBuffer.hasArray()) {
+            int offset = byteBuffer.arrayOffset() + byteBuffer.position();
+            return Base64.encodeAsString(Arrays.copyOfRange(byteBuffer.array(), offset, offset + byteBuffer.remaining());
+        }
+        byte[] binaryData = new byte[byteBuffer.remaining()];
         byteBuffer.get(binaryData);
         return Base64.encodeAsString(binaryData);
     }
